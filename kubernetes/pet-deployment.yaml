@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-server
+  labels:
+    name: fastapi-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-pet-store
+  template:
+    metadata:
+      labels:
+        app: fastapi-pet-store
+    spec:
+      containers:
+        - name: fastapi-pet-store
+          image:  un1ck/petstore:latest
+          command: [ "sleep" ]
+          args: [ "infinity" ]
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: env-file
+              readOnly: true
+              mountPath: "/pet_store/.env"
+              subPath: .env
+      volumes:
+        - name: env-file
+          secret:
+            secretName: fastapi-server-credentials
